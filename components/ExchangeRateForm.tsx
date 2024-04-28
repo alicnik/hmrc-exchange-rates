@@ -13,55 +13,73 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { MONTHS } from '@/app/constants';
 import { Separator } from './ui/separator';
 import { Output } from './ui/output';
+import { FormState } from '@/app/form-state';
 
-export function ExchangeRateForm() {
-  const [state, action] = useFormState(performExchangeRateCalculation, {
-    result: null,
-  });
-  const [currency, setCurrency] = React.useState('');
-  console.log(state);
+type ExchangeRateFormProps = {
+  initialState: FormState;
+  currencies: string[];
+  yearsAndMonths: Record<string, string[]>;
+};
+
+export function ExchangeRateForm({
+  initialState,
+  currencies,
+  yearsAndMonths,
+}: ExchangeRateFormProps) {
+  const [state, action] = useFormState(
+    performExchangeRateCalculation,
+    initialState,
+  );
+  const [currency, setCurrency] = React.useState(state.currency);
+  const [year, setYear] = React.useState(state.year);
+  const monthsWithData = yearsAndMonths[year];
+
   return (
     <form action={action} className="flex flex-col gap-4 p-4">
-      <div>
+      <div className="space-y-1">
         <Label htmlFor="currency">Origin Currency</Label>
-        <Select name="currency" onValueChange={setCurrency}>
+        <Select
+          defaultValue={state.currency}
+          name="currency"
+          onValueChange={setCurrency}
+        >
           <SelectTrigger>
-            <SelectValue
-              placeholder="Currency"
-              defaultValue="EUR"
-              id="currency"
-            />
+            <SelectValue placeholder="Currency" id="currency" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="EUR">Euro</SelectItem>
-            <SelectItem value="USD">US Dollar</SelectItem>
+            {currencies.map((currency) => (
+              <SelectItem key={currency} value={currency}>
+                {currency}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
 
-      <div>
+      <div className="space-y-1">
         <Label htmlFor="amount">
           Amount {currency ? `(${currency})` : null}
         </Label>
-        <Input type="number" id="amount" name="amount" step=".01" />
+        <Input
+          type="number"
+          id="amount"
+          name="amount"
+          step=".01"
+          defaultValue={state.amount}
+        />
       </div>
 
       <div className="flex gap-4">
-        <div>
+        <div className="flex-grow space-y-1">
           <Label htmlFor="month">Month</Label>
-          <Select name="month">
-            <SelectTrigger className="w-60">
-              <SelectValue
-                placeholder="Month"
-                defaultValue="January"
-                id="month"
-              />
+          <Select name="month" defaultValue={state.month}>
+            <SelectTrigger>
+              <SelectValue placeholder="Month" id="month" />
             </SelectTrigger>
             <SelectContent>
-              {MONTHS.map((month) => (
+              {monthsWithData.map((month) => (
                 <SelectItem key={month} value={month}>
                   {month}
                 </SelectItem>
@@ -69,11 +87,12 @@ export function ExchangeRateForm() {
             </SelectContent>
           </Select>
         </div>
-        <div>
+
+        <div className="space-y-1">
           <Label htmlFor="year">Year</Label>
-          <Select name="year">
+          <Select name="year" defaultValue={state.year} onValueChange={setYear}>
             <SelectTrigger className="w-40">
-              <SelectValue placeholder="Year" defaultValue="2023" id="year" />
+              <SelectValue placeholder="Year" id="year" />
             </SelectTrigger>
             <SelectContent>
               {['2022', '2023'].map((year) => (
@@ -85,9 +104,12 @@ export function ExchangeRateForm() {
           </Select>
         </div>
       </div>
+
       <Button type="submit">Submit</Button>
+
       <Separator />
-      <div>
+
+      <div className="space-y-1">
         <Label htmlFor="result">Result</Label>
         <Output id="result" name="result" htmlFor="amount currency month year">
           {state.result}
