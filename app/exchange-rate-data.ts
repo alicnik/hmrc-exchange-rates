@@ -1,10 +1,11 @@
 import path from 'path';
 import { MONTHS } from './constants';
+import fs from 'fs/promises';
 
 export async function getExchangeRateData() {
   const filePath = path.join(process.cwd(), 'public', 'data.json');
-  const file = Bun.file(filePath);
-  const data = JSON.parse(await file.text());
+  const contents = await fs.readFile(filePath, { encoding: 'utf-8' });
+  const data = JSON.parse(contents);
 
   return data;
 }
