@@ -16,6 +16,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from './ui/separator';
 import { Output } from './ui/output';
 import { FormState } from '@/app/form-state';
+import { cn } from '@/lib/utils';
 
 type ExchangeRateFormProps = {
   initialState: FormState;
@@ -36,6 +37,7 @@ export function ExchangeRateForm({
   const [month, setMonth] = React.useState(state.month);
   const [year, setYear] = React.useState(state.year);
   const monthsWithData = yearsAndMonths[year];
+  const isDifferentMonthOrYear = state.year !== year || state.month !== month;
 
   return (
     <form action={action} className="flex flex-col gap-4 p-4">
@@ -101,7 +103,7 @@ export function ExchangeRateForm({
               <SelectValue placeholder="Year" id="year" />
             </SelectTrigger>
             <SelectContent>
-              {['2022', '2023'].map((year) => (
+              {Object.keys(yearsAndMonths).map((year) => (
                 <SelectItem key={year} value={year}>
                   {year}
                 </SelectItem>
@@ -118,12 +120,19 @@ export function ExchangeRateForm({
       <div className="space-y-1">
         <Label>Exchange Rate</Label>
         <p className="text-sm">
-          {state.result !== '£0.00'
-            ? `${state.amount} ${state.currency} converted to ${state.result
-                .toString()
-                .slice(1)} GBP using HMRC exchange
-          rate for ${state.month} ${state.year} of ${state.exchangeRate}.`
-            : 'Please enter an amount above then click submit.'}
+          {state.result !== '£0.00' ? (
+            <>
+              {state.amount} {state.currency} converted to{' '}
+              {state.result.toString().slice(1)} GBP using HMRC exchange rate
+              for{' '}
+              <span className={cn(isDifferentMonthOrYear && 'text-warning')}>
+                {state.month} {state.year}
+              </span>{' '}
+              of {state.exchangeRate}.
+            </>
+          ) : (
+            'Please enter an amount above then click submit.'
+          )}
         </p>
       </div>
 
