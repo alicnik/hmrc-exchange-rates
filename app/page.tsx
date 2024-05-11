@@ -7,7 +7,7 @@ export default async function Home() {
   const { currencies, yearsAndMonths } = await getExchangeRateFormData();
 
   return (
-    <main>
+    <main className="container max-w-screen-sm">
       <ExchangeRateForm
         initialState={initialState}
         yearsAndMonths={yearsAndMonths}

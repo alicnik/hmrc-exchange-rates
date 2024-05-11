@@ -33,6 +33,7 @@ export function ExchangeRateForm({
     initialState,
   );
   const [currency, setCurrency] = React.useState(state.currency);
+  const [month, setMonth] = React.useState(state.month);
   const [year, setYear] = React.useState(state.year);
   const monthsWithData = yearsAndMonths[year];
 
@@ -74,7 +75,12 @@ export function ExchangeRateForm({
       <div className="flex gap-4">
         <div className="flex-grow space-y-1">
           <Label htmlFor="month">Month</Label>
-          <Select name="month" defaultValue={state.month}>
+          <Select
+            name="month"
+            defaultValue={state.month}
+            value={monthsWithData.includes(month) ? month : monthsWithData[0]}
+            onValueChange={setMonth}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Month" id="month" />
             </SelectTrigger>
@@ -107,7 +113,19 @@ export function ExchangeRateForm({
 
       <Button type="submit">Submit</Button>
 
-      <Separator />
+      <Separator className="my-8" />
+
+      <div className="space-y-1">
+        <Label>Exchange Rate</Label>
+        <p className="text-sm">
+          {state.result !== '£0.00'
+            ? `${state.amount} ${state.currency} converted to ${state.result
+                .toString()
+                .slice(1)} GBP using HMRC exchange
+          rate for ${state.month} ${state.year} of ${state.exchangeRate}.`
+            : 'Please enter an amount above then click submit.'}
+        </p>
+      </div>
 
       <div className="space-y-1">
         <Label htmlFor="result">Result</Label>

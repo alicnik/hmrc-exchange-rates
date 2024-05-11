@@ -27,6 +27,7 @@ export async function performExchangeRateCalculation(
       amount: 0,
       result: 0,
       error: validatedFields.error.flatten().fieldErrors,
+      exchangeRate: null,
     };
   }
 
@@ -47,6 +48,7 @@ export async function performExchangeRateCalculation(
     year,
     amount,
     result,
+    exchangeRate,
   };
 
   cookies().set('form_state', JSON.stringify(state));
