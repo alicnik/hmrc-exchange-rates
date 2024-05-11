@@ -17,6 +17,7 @@ import { Separator } from './ui/separator';
 import { Output } from './ui/output';
 import { FormState } from '@/app/form-state';
 import { cn } from '@/lib/utils';
+import { CopyToClipboard } from './CopyToClipboard';
 
 type ExchangeRateFormProps = {
   initialState: FormState;
@@ -33,11 +34,21 @@ export function ExchangeRateForm({
     performExchangeRateCalculation,
     initialState,
   );
+
   const [currency, setCurrency] = React.useState(state.currency);
   const [month, setMonth] = React.useState(state.month);
   const [year, setYear] = React.useState(state.year);
+
   const monthsWithData = yearsAndMonths[year];
   const isDifferentMonthOrYear = state.year !== year || state.month !== month;
+
+  const explanatoryNote = `${state.amount.toFixed(2)} ${
+    state.currency
+  } converted to ${state.result
+    .toString()
+    .slice(1)} GBP using HMRC exchange rate for ${state.month} ${
+    state.year
+  } at ${state.exchangeRate}.`;
 
   return (
     <form action={action} className="flex flex-col gap-4 p-4">
@@ -117,19 +128,16 @@ export function ExchangeRateForm({
 
       <Separator className="my-8" />
 
-      <div className="space-y-1">
-        <Label>Exchange Rate</Label>
+      <div className="space-y-2">
+        <div className="flex gap-2">
+          <Label>Exchange Rate Note</Label>{' '}
+          <CopyToClipboard text={explanatoryNote} />
+        </div>
         <p className="text-sm">
           {state.result !== '£0.00' ? (
-            <>
-              {state.amount} {state.currency} converted to{' '}
-              {state.result.toString().slice(1)} GBP using HMRC exchange rate
-              for{' '}
-              <span className={cn(isDifferentMonthOrYear && 'text-warning')}>
-                {state.month} {state.year}
-              </span>{' '}
-              of {state.exchangeRate}.
-            </>
+            <span className={cn(isDifferentMonthOrYear && 'text-warning')}>
+              {explanatoryNote}
+            </span>
           ) : (
             'Please enter an amount above then click submit.'
           )}

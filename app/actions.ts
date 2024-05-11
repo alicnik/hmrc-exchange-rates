@@ -25,9 +25,9 @@ export async function performExchangeRateCalculation(
       month: '',
       year: '',
       amount: 0,
-      result: 0,
+      result: '£0.00',
       error: validatedFields.error.flatten().fieldErrors,
-      exchangeRate: null,
+      exchangeRate: 0,
     };
   }
 
