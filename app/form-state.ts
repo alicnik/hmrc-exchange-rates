@@ -12,6 +12,7 @@ const defaultState = {
     currency: 'GBP',
   }).format(0),
   exchangeRate: 1.1652,
+  destination: 'GBP',
 };
 
 export type FormState = typeof defaultState;

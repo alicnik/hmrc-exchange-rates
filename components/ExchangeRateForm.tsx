@@ -46,7 +46,7 @@ export function ExchangeRateForm({
     state.currency
   } converted to ${state.result
     .toString()
-    .slice(1)} GBP using HMRC exchange rate for ${state.month} ${
+    .slice(1)} ${state.destination} using HMRC exchange rate for ${state.month} ${
     state.year
   } at ${state.exchangeRate}.`;
 
@@ -63,14 +63,33 @@ export function ExchangeRateForm({
             <SelectValue placeholder="Currency" id="currency" />
           </SelectTrigger>
           <SelectContent>
-            {currencies.map((currency) => (
-              <SelectItem key={currency} value={currency}>
-                {currency}
+            <SelectItem value="GBP">GBP</SelectItem>
+            {currencies.map((c) => (
+              <SelectItem key={c} value={c}>
+                {c}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
+
+      {currency === 'GBP' ? (
+        <div className="space-y-1">
+          <Label htmlFor="currency">Destination Currency</Label>
+          <Select defaultValue="GBP" name="destination">
+            <SelectTrigger>
+              <SelectValue placeholder="Currency" id="currency" />
+            </SelectTrigger>
+            <SelectContent>
+              {currencies.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {c}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      ) : null}
 
       <div className="space-y-1">
         <Label htmlFor="amount">
